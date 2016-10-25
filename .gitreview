@@ -1,0 +1,5 @@
+[gerrit]
+host=embedded.savoirfairelinux.com
+port=29419
+project=radiocanada/ffmpeg
+defaultbranch=radiocanada/release/3.4
