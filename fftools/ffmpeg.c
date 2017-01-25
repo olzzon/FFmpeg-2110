@@ -23,6 +23,8 @@
  * multimedia converter based on the FFmpeg libraries
  */
 
+#define _GNU_SOURCE // needed for pthread_setname_np
+
 #include "config.h"
 #include <ctype.h>
 #include <string.h>
@@ -4054,8 +4056,9 @@ static int init_input_threads(void)
 {
     int i, ret;
 
-    if (nb_input_files == 1)
-        return 0;
+    /* we want to force a seperate input thread even with only one input */
+    // if (nb_input_files == 1)
+    //     return 0;
 
     for (i = 0; i < nb_input_files; i++) {
         InputFile *f = input_files[i];
@@ -4073,6 +4076,7 @@ static int init_input_threads(void)
             av_thread_message_queue_free(&f->in_thread_queue);
             return AVERROR(ret);
         }
+        pthread_setname_np(f->thread, "ffmpeg-input");
     }
     return 0;
 }
@@ -4099,8 +4103,9 @@ static int get_input_packet(InputFile *f, AVPacket *pkt)
     }
 
 #if HAVE_PTHREADS
-    if (nb_input_files > 1)
-        return get_input_packet_mt(f, pkt);
+    /* we use a seperate input thread even with only one input */
+    // if (nb_input_files > 1)
+    return get_input_packet_mt(f, pkt);
 #endif
     return av_read_frame(f->ctx, pkt);
 }
@@ -4590,6 +4595,10 @@ static int transcode(void)
     if (stdin_interaction) {
         av_log(NULL, AV_LOG_INFO, "Press [q] to stop, [?] for help\n");
     }
+
+    // name main thread after transcode_init() so that any encoder threads don't have the same name
+    pthread_t thread_main = pthread_self();
+    pthread_setname_np(thread_main, "ffmpeg-main");
 
     timer_start = av_gettime_relative();
 
