@@ -162,7 +162,7 @@ Do the same for the max number of packets in the receive queue:
 echo 10000 > /proc/sys/net/core/netdev_max_backlog
 ```
 
-## FFmepg Documentation
+## FFmpeg Documentation
 
 Online documentation is available in the main [website](https://ffmpeg.org)
 and in the [wiki](https://trac.ffmpeg.org).
