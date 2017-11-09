@@ -30,12 +30,12 @@ of bandwidth, especially when additional streams are provided.
 ### Build
 
 ```
-./configure
+./configure \
 	--extra-libs=-ldl \
 	--enable-version3 --enable-gpl --enable-nonfree \
 	--enable-small \
 	--enable-postproc --enable-avresample \
-	--enable-libfaac --enable-libx264 \
+	--enable-libfdk-aac --enable-libx264 \
 	--disable-ffplay --disable-ffprobe --disable-ffserver \
 	--disable-stripping --disable-debug
 make
@@ -117,7 +117,8 @@ Run ffmpeg transcoder:
 ```
 ./ffmpeg -strict experimental -buffer_size 300000 \
 	-protocol_whitelist 'file,udp,rtp' \
-	-i test.sdp -fifo_size 10000000 -c:v libx264 -pass 1 \
+	-i test.sdp -fifo_size 10000000 \
+	-c:a libfdk_aac -c:v libx264 -pass 1 \
 	-f mpegts udp://<monitor IP>:<monitor port>
 ```
 
