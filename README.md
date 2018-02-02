@@ -74,12 +74,12 @@ can generate adequate streams. The following command:
 ```
 gst-launch-1.0 rtpbin name=rtpbin \
 	videotestsrc horizontal-speed=2 !  \
-	video/x-raw,width=640,height=480,framerate=30/1,format=UYVY ! rtpvrawpay pt=102 ! queue ! \
+	video/x-raw,width=1920,height=1080,framerate=30/1,format=UYVP ! rtpvrawpay pt=102 ! queue ! \
 	rtpbin.send_rtp_sink_1 rtpbin.send_rtp_src_1 ! queue  \
 	udpsink host=239.0.0.0 port=5005 render-delay=0 rtpbin.send_rtcp_src_1 ! \
 	udpsink host=239.0.0.0 port=5005 sync=false async=false \
 	audiotestsrc ! audioresample ! audioconvert ! \
-	rtpL24pay ! application/x-rtp, pt=103, payload=103, clock-rate=44100, channels=2 ! \
+	rtpL24pay ! application/x-rtp, pt=103, payload=103, clock-rate=48000, channels=2 ! \
 	rtpbin.send_rtp_sink_0 rtpbin.send_rtp_src_0 ! \
 	udpsink host=239.0.0.0 port=5007 render-delay=0 rtpbin.send_rtcp_src_0 ! \
 	udpsink host=239.0.0.0 port=5007 sync=false async=false
@@ -93,7 +93,7 @@ Copy RTP session description to new test.sdp file:
 # session
 v=0
 o=- 123456 11 IN IP4 X.X.X.X
-s=A simple SMPTE TS 2110 session
+s=A simple SMPTE ST 2110 session
 i=basic streams for audio video
 a=recvonly
 
@@ -104,20 +104,20 @@ t=0 0
 m=video 5005 RTP/AVP 102
 c=IN IP4 239.0.0.0/4
 a=rtpmap:102 raw/90000
-a=fmtp:102 sampling=YCbCr-4:2:2; width=640; height=480; depth=8; colorimetry=BT.2020; EOTF=SMPTE2084
+a=fmtp:102 sampling=YCbCr-4:2:2; width=1920; height=1080; depth=10; colorimetry=BT.709
 
 # audio description
 m=audio 5007 RTP/AVP 103
 c=IN IP4 239.0.0.0/4
-a=rtpmap:103 L24/44100/2
+a=rtpmap:103 L24/48000/2
 ```
 
 Run ffmpeg transcoder:
 
 ```
-./ffmpeg -strict experimental -buffer_size 300000 \
+./ffmpeg -strict experimental -buffer_size 671088640 \
 	-protocol_whitelist 'file,udp,rtp' \
-	-i test.sdp -fifo_size 10000000 \
+	-i test.sdp -fifo_size 1000000000 \
 	-c:a libfdk_aac -c:v libx264 -pass 1 \
 	-f mpegts udp://<monitor IP>:<monitor port>
 ```
@@ -134,10 +134,10 @@ or
 ffplay udp://<monitor IP>:<monitor port>
 ```
 
-### For 10-bit pixel format
+### For 8-bit pixel format
 
-Replace ``format=UYVY`` with ``format=UYVP`` in the gstreamer command
-line and ``depth=8`` with ``depth=10`` in the SDP file.
+Replace ``format=UYVP`` with ``format=UYVV`` in the gstreamer command
+line and ``depth=10`` with ``depth=8`` in the SDP file.
 
 ### Network performance
 
