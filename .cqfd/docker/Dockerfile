@@ -15,7 +15,6 @@ RUN yum -y update && yum install -y \
 	git \
 	libtool \
 	make \
-	nasm \
 	net-tools \
 	openssl-devel \
 	perl \
@@ -24,7 +23,8 @@ RUN yum -y update && yum install -y \
 	zlib-devel
 
 ENV FDKAAC_VERSION=0.1.4 \
-	 YASM_VERSION=1.3.0
+	 YASM_VERSION=1.3.0 \
+	 NASM_VERSION=2.13.02
 ENV PREFIX=/usr/local
 ENV PKG_CONFIG_PATH=${PREFIX}/lib/pkgconfig
 

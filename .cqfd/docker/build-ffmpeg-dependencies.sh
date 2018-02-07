@@ -25,6 +25,13 @@ make install
 make distclean
 rm -rf $DIR
 
+# nasm
+cd /tmp
+nasm_rpm=nasm-$NASM_VERSION-0.fc24.x86_64.rpm
+curl -O http://www.nasm.us/pub/nasm/releasebuilds/$NASM_VERSION/linux/$nasm_rpm
+rpm -i $nasm_rpm
+rm -f $nasm_rpm
+
 # x264
 DIR=$(mktemp -d)
 cd $DIR/
