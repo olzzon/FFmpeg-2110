@@ -1723,6 +1723,10 @@ typedef struct AVPacket {
  * outside the packet may be followed.
  */
 #define AV_PKT_FLAG_TRUSTED   0x0008
+/**
+ * The packet contains a top field.
+ */
+#define AV_PKT_FLAG_TOP_FIELD  0x0010
 
 enum AVSideDataParamChangeFlags {
     AV_SIDE_DATA_PARAM_CHANGE_CHANNEL_COUNT  = 0x0001,
