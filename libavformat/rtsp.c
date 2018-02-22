@@ -74,8 +74,8 @@
 #define COMMON_OPTS() \
     { "reorder_queue_size", "set number of packets to buffer for handling of reordered packets", OFFSET(reordering_queue_size), AV_OPT_TYPE_INT, { .i64 = -1 }, -1, INT_MAX, DEC }, \
     { "buffer_size",        "Underlying protocol send/receive buffer size",                  OFFSET(buffer_size),           AV_OPT_TYPE_INT, { .i64 = -1 }, -1, INT_MAX, DEC|ENC }, \
-    { "pkt_size",           "Underlying protocol send packet size",                          OFFSET(pkt_size),              AV_OPT_TYPE_INT, { .i64 = -1 }, -1, INT_MAX, ENC } \
-
+    { "pkt_size",           "Underlying protocol send packet size",                          OFFSET(pkt_size),              AV_OPT_TYPE_INT, { .i64 = -1 }, -1, INT_MAX, ENC }, \
+    { "smpte2110_timestamp", "Compute PTS based on RTP timestamps, according to SMPTE2110 spec", OFFSET(compute_smpte2110_timestamp), AV_OPT_TYPE_BOOL, { .i64 = 0 }, 0, 1, DEC}
 
 const AVOption ff_rtsp_options[] = {
     { "initial_pause",  "do not start playing the stream immediately", OFFSET(initial_pause), AV_OPT_TYPE_BOOL, {.i64 = 0}, 0, 1, DEC },
@@ -859,10 +859,13 @@ int ff_rtsp_open_transport_ctx(AVFormatContext *s, RTSPStream *rtsp_st)
         rtsp_st->transport_priv = ff_rdt_parse_open(s, st->index,
                                             rtsp_st->dynamic_protocol_context,
                                             rtsp_st->dynamic_handler);
-    else if (CONFIG_RTPDEC)
+    else if (CONFIG_RTPDEC) {
         rtsp_st->transport_priv = ff_rtp_parse_open(s, st,
                                          rtsp_st->sdp_payload_type,
                                          reordering_queue_size);
+        if (rt->compute_smpte2110_timestamp)
+            ff_rtp_enable_smpte2110_timestamp(rtsp_st->transport_priv);
+    }
 
     if (!rtsp_st->transport_priv) {
          return AVERROR(ENOMEM);
