@@ -31,6 +31,8 @@ struct PayloadContext {
     int depth;
     int width;
     int height;
+    int interlaced;
+    int field;
 
     uint8_t *frame;
     unsigned int frame_size;
@@ -65,10 +67,18 @@ static int rfc4175_parse_format(AVStream *stream, PayloadContext *data)
         return AVERROR_INVALIDDATA;
     }
 
+    if (data->interlaced)
+        stream->codecpar->field_order = AV_FIELD_TT;
+    else
+        stream->codecpar->field_order = AV_FIELD_PROGRESSIVE;
+
     stream->codecpar->format = pixfmt;
     stream->codecpar->codec_tag = tag;
     stream->codecpar->bits_per_coded_sample = bits_per_sample;
-    data->frame_size = data->width * data->height * data->pgroup / data->xinc;
+    if (data->interlaced)
+        data->frame_size = data->width * (data->height / 2) * data->pgroup / data->xinc;
+    else
+        data->frame_size = data->width * data->height * data->pgroup / data->xinc;
 
     return 0;
 }
@@ -85,6 +95,8 @@ static int rfc4175_parse_fmtp(AVFormatContext *s, AVStream *stream,
         data->sampling = av_strdup(value);
     else if (!strncmp(attr, "depth", 5))
         data->depth = atoi(value);
+    else if (!strncmp(attr, "interlace", 9))
+        data->interlaced = 1;
 
     return 0;
 }
@@ -131,7 +143,11 @@ static int rfc4175_finalize_packet(PayloadContext *data, AVPacket *pkt,
        av_freep(&data->frame);
    }
 
+   /* In the packet header, the field is set to 0 for top field
+    * and 1 for bottom */
+   pkt->flags |= data->field ? 0 : AV_PKT_FLAG_TOP_FIELD;
    data->frame = NULL;
+   data->field = 0;
 
    return ret;
 }
@@ -141,7 +157,7 @@ static int rfc4175_handle_packet(AVFormatContext *ctx, PayloadContext *data,
                                  const uint8_t * buf, int len,
                                  uint16_t seq, int flags)
 {
-    int length, line, offset, cont;
+    int length, line, offset, cont, field;
     const uint8_t *headers = buf + 2; /* skip extended seqnum */
     const uint8_t *payload = buf + 2;
     int payload_len = len - 2;
@@ -194,10 +210,13 @@ static int rfc4175_handle_packet(AVFormatContext *ctx, PayloadContext *data,
             return AVERROR_INVALIDDATA;
 
         length = (headers[0] << 8) | headers[1];
+        field = (headers[2] & 0x80);
         line = ((headers[2] & 0x7f) << 8) | headers[3];
         offset = ((headers[4] & 0x7f) << 8) | headers[5];
         cont = headers[4] & 0x80;
         headers += 6;
+
+        data->field = field;
 
         if (length % data->pgroup)
             return AVERROR_INVALIDDATA;
