@@ -64,9 +64,6 @@ static int bitpacked_decode_yuv422p10(AVCodecContext *avctx, AVFrame *frame,
     uint16_t *y, *u, *v;
     int ret, i, j;
 
-    ret = ff_get_buffer(avctx, frame, 0);
-    if (ret < 0)
-        return ret;
 
     if (frame_size > packet_size)
         return AVERROR_INVALIDDATA;
@@ -127,6 +124,12 @@ static int bitpacked_decode(AVCodecContext *avctx, void *data, int *got_frame,
 
     frame->pict_type = AV_PICTURE_TYPE_I;
     frame->key_frame = 1;
+
+    if (avctx->pix_fmt == AV_PIX_FMT_YUV422P10) {
+        res = ff_get_buffer(avctx, frame, 0);
+        if (res < 0)
+            return res;
+    }
 
     res = bc->decode(avctx, frame, avpkt);
     if (res)
