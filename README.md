@@ -21,7 +21,7 @@ of bandwidth, especially when additional streams are provided.
 
 ## Install
 
-### Dependencies
+### Transcoding dependencies
 
 * `x264`
 * `faac`
@@ -100,16 +100,16 @@ a=recvonly
 # timing: unbounded and permanent session
 t=0 0
 
+# audio description first for better results
+m=audio 5007 RTP/AVP 103
+c=IN IP4 239.0.0.0/4
+a=rtpmap:103 L24/48000/2
+
 # video description
 m=video 5005 RTP/AVP 102
 c=IN IP4 239.0.0.0/4
 a=rtpmap:102 raw/90000
 a=fmtp:102 sampling=YCbCr-4:2:2; width=1920; height=1080; depth=10; colorimetry=BT.709
-
-# audio description
-m=audio 5007 RTP/AVP 103
-c=IN IP4 239.0.0.0/4
-a=rtpmap:103 L24/48000/2
 ```
 
 Run ffmpeg transcoder:
@@ -138,6 +138,25 @@ ffplay udp://<monitor IP>:<monitor port>
 
 Replace ``format=UYVP`` with ``format=UYVV`` in the gstreamer command
 line and ``depth=10`` with ``depth=8`` in the SDP file.
+
+### Transcoding performance
+
+If your host struggles while transcoding the stream, you can still:
+* enable multi-threading
+* downsize the image right after the decoding
+* decrease the quality of the h264 output
+
+```
+./ffmpeg -strict experimental \
+	-buffer_size 671088640 \
+	-threads 4 \
+	-protocol_whitelist 'file,udp,rtp' \
+	-i test.sdp -fifo_size 1000000000 \
+	-vf scale=640:480 \
+	-c:v libx264 -preset ultrafast -pass 1 \
+	-c:a libfdk_aac -ac 2 \
+	-f mpegts udp://<monitor IP>:<monitor port>
+```
 
 ### Network performance
 
