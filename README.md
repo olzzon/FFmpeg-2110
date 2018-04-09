@@ -117,7 +117,7 @@ Run ffmpeg transcoder:
 ```
 ./ffmpeg -strict experimental -buffer_size 671088640 \
 	-protocol_whitelist 'file,udp,rtp' \
-	-i test.sdp -fifo_size 1000000000 \
+	-i test.sdp -fifo_size 1000000000 -smpte2110_timestamp 1 \
 	-c:a libfdk_aac -c:v libx264 -pass 1 \
 	-f mpegts udp://<monitor IP>:<monitor port>
 ```
