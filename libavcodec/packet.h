@@ -291,6 +291,12 @@ enum AVPacketSideDataType {
     AV_PKT_DATA_S12M_TIMECODE,
 
     /**
+     * Generic side data for any parameter that can't fit in a AVPacket,
+     * e.g. interlaced field flags.
+     */
+    AV_PKT_DATA_ANCILLARY,
+
+    /**
      * The number of side data types.
      * This is not part of the public API/ABI in the sense that it may
      * change when new side data types are added.

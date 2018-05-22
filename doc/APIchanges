@@ -15,6 +15,9 @@ libavutil:     2017-10-21
 
 API changes, most recent first:
 
+2021-12-xx - xxxxxxxxxx - lavc 58.133.101 - avcodec.h
+  Add AV_PKT_DATA_ANCILLARY to hold various side data.
+
 -------- 8< --------- FFmpeg 4.4 was cut here -------- 8< ---------
 
 2021-03-19 - e8c0bca6bd - lavu 56.69.100 - adler32.h

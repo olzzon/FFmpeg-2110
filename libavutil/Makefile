@@ -4,6 +4,7 @@ DESC = FFmpeg utility library
 HEADERS = adler32.h                                                     \
           aes.h                                                         \
           aes_ctr.h                                                     \
+          ancillary_data.h                                              \
           attributes.h                                                  \
           audio_fifo.h                                                  \
           avassert.h                                                    \
@@ -99,6 +100,7 @@ BUILT_HEADERS = avconfig.h                                              \
 OBJS = adler32.o                                                        \
        aes.o                                                            \
        aes_ctr.o                                                        \
+       ancillary_data.o                                                 \
        audio_fifo.o                                                     \
        avstring.o                                                       \
        avsscanf.o                                                       \
