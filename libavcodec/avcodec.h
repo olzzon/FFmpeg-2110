@@ -1360,6 +1360,12 @@ enum AVPacketSideDataType {
     AV_PKT_DATA_ENCRYPTION_INFO,
 
     /**
+     * Generic side data for any parameter that can't fit in a AVPacket,
+     * e.g. interlaced field flags.
+     */
+    AV_PKT_DATA_ANCILLARY,
+
+    /**
      * The number of side data types.
      * This is not part of the public API/ABI in the sense that it may
      * change when new side data types are added.
@@ -1481,7 +1487,6 @@ typedef struct AVPacket {
  * be discarded by the decoder.  I.e. Non-reference frames.
  */
 #define AV_PKT_FLAG_DISPOSABLE 0x0010
-
 
 enum AVSideDataParamChangeFlags {
     AV_SIDE_DATA_PARAM_CHANGE_CHANNEL_COUNT  = 0x0001,
