@@ -314,6 +314,16 @@ static int sdp_parse_rtpmap(AVFormatContext *s,
         if (i > 0)
             avpriv_set_pts_info(st, 32, 1, i);
         break;
+    case AVMEDIA_TYPE_DATA:
+        av_log(s, AV_LOG_DEBUG, "data codec set to: %s\n", c_name);
+        if (i > 0)
+            avpriv_set_pts_info(st, 32, 1, i);
+        break;
+    case AVMEDIA_TYPE_SUBTITLE:
+        av_log(s, AV_LOG_DEBUG, "subtitle codec set to: %s\n", c_name);
+        if (i > 0)
+            avpriv_set_pts_info(st, 32, 1, i);
+        break;
     default:
         break;
     }

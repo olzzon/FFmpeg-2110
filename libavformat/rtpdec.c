@@ -111,6 +111,7 @@ static const RTPDynamicProtocolHandler *rtp_dynamic_protocol_handler_list[] = {
     &ff_qt_rtp_vid_handler,
     &ff_quicktime_rtp_aud_handler,
     &ff_quicktime_rtp_vid_handler,
+    &ff_smpte291_rtp_handler,
     &ff_rfc4175_rtp_handler,
     &ff_svq3_dynamic_handler,
     &ff_theora_dynamic_handler,

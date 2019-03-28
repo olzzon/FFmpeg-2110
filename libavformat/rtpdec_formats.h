@@ -82,6 +82,7 @@ extern const RTPDynamicProtocolHandler ff_qt_rtp_aud_handler;
 extern const RTPDynamicProtocolHandler ff_qt_rtp_vid_handler;
 extern const RTPDynamicProtocolHandler ff_quicktime_rtp_aud_handler;
 extern const RTPDynamicProtocolHandler ff_quicktime_rtp_vid_handler;
+extern const RTPDynamicProtocolHandler ff_smpte291_rtp_handler;
 extern const RTPDynamicProtocolHandler ff_rfc4175_rtp_handler;
 extern const RTPDynamicProtocolHandler ff_svq3_dynamic_handler;
 extern const RTPDynamicProtocolHandler ff_theora_dynamic_handler;
